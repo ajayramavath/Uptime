@@ -8,8 +8,41 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(cuid())
-  email    String  @unique
+  id       String    @id @default(uuid())
   name     String
-  password String?
+  password String
+  websites Website[]
+}
+
+model Website {
+  id        String        @id @default(uuid())
+  url       String
+  ticks     WebsiteTick[]
+  user_id   String
+  user      User          @relation(fields: [user_id], references: [id])
+  createdAt DateTime      @default(now())
+}
+
+model Region {
+  id    String        @id @default(uuid())
+  name  String
+  ticks WebsiteTick[]
+}
+
+model WebsiteTick {
+  id              String  @id @default(uuid())
+  responseTime_ms Int
+  status          Status
+  website         Website @relation(fields: [websiteId], references: [id])
+  websiteId       String
+  region          Region  @relation(fields: [regionId], references: [id])
+  regionId        String
+
+  createdAt DateTime @default(now())
+}
+
+enum Status {
+  Up
+  Down
+  Unknown
 }
